@@ -1,25 +1,42 @@
+import unittest
+from unittest.mock import patch
+
 alert_failure_count = 0
 
-def network_alert_stub(celcius):
-    print(f'ALERT: Temperature is {celcius} celcius')
-    # Return 200 for ok
-    # Return 500 for not-ok
-    # stub always succeeds and returns 200
+
+def simulate_network_alert(celsius):
+    print(f'WARNING: Temperature is {celsius} Celsius')
+    # Return 200 for success
+    # Return 500 for failure
+    # This stub always returns 200 (success)
+    if celsius > 200:
+        return 500
     return 200
 
-def alert_in_celcius(farenheit):
-    celcius = (farenheit - 32) * 5 / 9
-    returnCode = network_alert_stub(celcius)
-    if returnCode != 200:
-        # non-ok response is not an error! Issues happen in life!
-        # let us keep a count of failures to report
-        # However, this code doesn't count failures!
-        # Add a test below to catch this bug. Alter the stub above, if needed.
+
+def temperature_alert_in_celsius(fahrenheit):
+    celsius = (fahrenheit - 32) * 5 / 9
+    response_code = simulate_network_alert(celsius)
+    if response_code != 200:
+        # Count failures, but currently it's not working correctly
         global alert_failure_count
         alert_failure_count += 0
 
 
-alert_in_celcius(400.5)
-alert_in_celcius(303.6)
-print(f'{alert_failure_count} alerts failed.')
-print('All is well (maybe!)')
+# Run some sample alerts
+temperature_alert_in_celsius(400.5)
+temperature_alert_in_celsius(303.6)
+assert(simulate_network_alert(204.2) == 500)
+print('System status check complete.')
+print(f'Number of failed alerts: {alert_failure_count}')
+
+@patch('simulate_network_alert')
+def test_failure_count_increment(mock_alert):
+    mock_alert.return_value = 500
+    temperature_alert_in_celsius(100)
+    assert(alert_failure_count == 1)
+
+
+# Run the unit test
+if __name__ == '__main__':
+    unittest.main()
