@@ -4,15 +4,15 @@ def create_color_map():
     
     color_map = [
         (index, primary, secondary)
-        for primary in primary_colors
-        for index, secondary in enumerate(secondary_colors, start=1 + primary_colors.index(primary) * len(secondary_colors))
+        for index, primary in enumerate(primary_colors, start=1)
+        for secondary in secondary_colors
     ]
     
     return color_map
 
 def display_color_map(color_map):
     for index, primary_color, secondary_color in color_map:
-        print(f'{index:02} | {primary_color:6} | {secondary_color}')
+        print(f'{index} | {primary_color} | {secondary_color}')
 
 # Generate and verify the color map
 color_map = create_color_map()
